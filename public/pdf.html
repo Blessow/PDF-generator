@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="style.css" />
+  <title>Generate PDF</title>
+</head>
+<body>
+  <div class="container">
+    <h2>Generate PDF</h2>
+    <textarea id="text" rows="10" placeholder="Enter your content here"></textarea>
+    <button onclick="generatePDF()">Generate</button>
+  </div>
+
+  <script>
+    function generatePDF() {
+      fetch("/generate-pdf", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+        body: JSON.stringify({ text: document.getElementById("text").value })
+      })
+      .then(res => res.blob())
+      .then(blob => {
+        const link = document.createElement("a");
+        link.href = window.URL.createObjectURL(blob);
+        link.download = "download.pdf";
+        link.click();
+      })
+      .catch(() => alert("Not authorized"));
+    }
+  </script>
+</body>
+</html>
